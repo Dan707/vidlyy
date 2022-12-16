@@ -1,16 +1,21 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const auth = require("../middleware/auth");
 const { Genre } = require("../models/genre");
 const router = express.Router();
 const { Movie, validate } = require("../models/movie");
 router.use(express.json());
 
-router.get("/", async (req, res) => {
-  const movie = await Movie.find().sort("name");
-  res.send(movie);
+router.get("/", auth, async (req, res) => {
+  try {
+    const movie = await Movie.find().sort("name");
+    res.send(movie);
+  } catch (ex) {
+    res.status(500).send(ex);
+  }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, async (req, res) => {
   try {
     const movie = await Movie.findById(req.params.id);
 
@@ -22,7 +27,7 @@ router.get("/:id", async (req, res) => {
 
 //Endpoint to post a movie
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -38,7 +43,7 @@ router.post("/", async (req, res) => {
       numberInStock: req.body.numberInStock,
       dailyRentalRate: req.body.dailyRentalRate,
     });
-    movie = await movie.save();
+    await movie.save();
 
     res.send(movie);
   } catch (ex) {
@@ -48,7 +53,7 @@ router.post("/", async (req, res) => {
 
 //Endpoint to update a movie
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -79,7 +84,7 @@ router.put("/:id", async (req, res) => {
 
 //Endpoint to delete a movie
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, async (req, res) => {
   try {
     const movie = await Movie.findByIdAndRemove(req.params.id);
     res.send(movie);

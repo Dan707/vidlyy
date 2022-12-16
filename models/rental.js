@@ -6,8 +6,8 @@ const { movieSchema } = require("./movie");
 const validateRentals = (rental) => {
   const schema = Joi.object({
     // title: Joi.string().min(5).max(50).required(),
-    customerId: Joi.string().required(),
-    movieId: Joi.string().required(),
+    customerId: Joi.objectId().required(),
+    movieId: Joi.objectId().required(),
   });
   return schema.validate({
     customerId: rental.customerId,
