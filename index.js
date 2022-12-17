@@ -1,12 +1,10 @@
 require("express-async-errors");
-const dotenv = require("dotenv");
 
 const winston = require("winston");
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
 const port = process.env.PORT || 5000;
-dotenv.config();
 
 const Joi = require("joi");
 // const config = require("config");
