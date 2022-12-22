@@ -1,12 +1,12 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const auth = require("../middleware/auth");
 const { Genre } = require("../models/genre");
 const router = express.Router();
 const { Movie, validate } = require("../models/movie");
 router.use(express.json());
 
-router.get("/", auth, async (req, res) => {
+//Endpoint to get all movies
+router.get("/", auth, async (_, res) => {
   try {
     const movie = await Movie.find().sort("name");
     res.send(movie);
@@ -15,10 +15,10 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
+//Endpoint to get a movie by id
 router.get("/:id", auth, async (req, res) => {
   try {
     const movie = await Movie.findById(req.params.id);
-
     res.send(movie);
   } catch (ex) {
     res.send(ex.message);
@@ -26,7 +26,6 @@ router.get("/:id", auth, async (req, res) => {
 });
 
 //Endpoint to post a movie
-
 router.post("/", auth, async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -44,7 +43,6 @@ router.post("/", auth, async (req, res) => {
       dailyRentalRate: req.body.dailyRentalRate,
     });
     await movie.save();
-
     res.send(movie);
   } catch (ex) {
     res.send(ex.message);
@@ -52,7 +50,6 @@ router.post("/", auth, async (req, res) => {
 });
 
 //Endpoint to update a movie
-
 router.put("/:id", auth, async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);

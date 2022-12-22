@@ -1,6 +1,3 @@
-const express = require("express");
-const router = express.Router();
-
-router.get("", (req, res) => res.send("Welcome to VIDLY!!!"));
-
+const router = require("express").Router();
+router.get("", (_, res) => res.send("Welcome to VIDLY!!!"));
 module.exports = router;

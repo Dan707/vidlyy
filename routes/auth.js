@@ -1,15 +1,13 @@
 const express = require("express");
 require("dotenv").config();
-const mongoose = require("mongoose");
 const Joi = require("joi");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const { User } = require("../models/user");
 router.use(express.json());
 const _ = require("lodash");
-const jwt = require("jsonwebtoken");
 
-const validate = (req) => {
+const validate = (req, _) => {
   const schema = Joi.object({
     email: Joi.string().min(5).max(255).required().email(),
     password: Joi.string().min(5).max(255).required(),
@@ -27,13 +25,11 @@ router.post("/", async (req, res) => {
   try {
     let user = await User.findOne({ email: req.body.email });
     if (!user) return res.status(400).send("Invalid email or password");
-
     const validPassword = await bcrypt.compare(
       req.body.password,
       user.password
     );
-    if (!validPassword)
-      return res.status(400).send("Invalid email or password");
+    if (!validPassword) return res.status(400).send("Invalid email or password");
     const token = user.generateAuthToken();
     res.send(token);
   } catch (ex) {

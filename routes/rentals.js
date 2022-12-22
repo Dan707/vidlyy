@@ -7,6 +7,7 @@ const { Movie } = require("../models/movie");
 const { Rental, validate } = require("../models/rental");
 router.use(express.json());
 
+//Endpoint to get all Rentals
 router.get("/", auth, async (req, res) => {
   try {
     const rental = await Rental.find().sort("-dateOut");
@@ -16,6 +17,7 @@ router.get("/", auth, async (req, res) => {
   }
 });
 
+//Endpoint to get a Rental by id
 router.get("/:id", auth, async (req, res) => {
   try {
     const rental = await Rental.findById(req.params.id);
@@ -27,7 +29,6 @@ router.get("/:id", auth, async (req, res) => {
 });
 
 //Endpoint to post a Rental
-
 router.post("/", auth, async (req, res) => {
   console.log(req.body);
   const { error } = validate(req.body);
@@ -42,22 +43,7 @@ router.post("/", auth, async (req, res) => {
     if (!customer) return res.status(400).send("Invalid Customer Id");
     if (movie.numberInStock === 0)
       return res.status(400).send("Movie is out of stock");
-    // let rental = await Rental.create(
-    //   {
-    //     customer: {
-    //       _id: customer._id,
-    //       name: customer.name,
-    //       isGold: customer.isGold,
-    //       phone: customer.phone,
-    //     },
-    //     movie: {
-    //       _id: movie._id,
-    //       title: movie.title,
-    //       dailyRentalRate: movie.dailyRentalRate,
-    //     },
-    //   },
-    //   { session }
-    // );
+  
     let rental = new Rental({
       customer: {
         _id: customer._id,
@@ -74,11 +60,6 @@ router.post("/", auth, async (req, res) => {
     rental = await rental.save({ session });
     movie.numberInStock--;
     await movie.save({ session });
-    // await Movie.updateOne(
-    //   { _id: req.body.movieId },
-    //   { $set: { numberInStock: { $inc: -1 } } },
-    //   { session }
-    // );
     await session.commitTransaction();
     session.endSession();
     res.send(rental);
@@ -91,7 +72,6 @@ router.post("/", auth, async (req, res) => {
 });
 
 //Endpoint to update a Rental
-
 router.put("/:id", auth, async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -133,7 +113,6 @@ router.put("/:id", auth, async (req, res) => {
 });
 
 //Endpoint to delete a Rental
-
 router.delete("/:id", auth, async (req, res) => {
   try {
     const rental = await Rental.findByIdAndRemove(req.params.id);
