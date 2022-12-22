@@ -1,12 +1,10 @@
 require("express-async-errors");
 const winston = require("winston");
-const express = require("express");
+const app = require("express")();
 const mongoose = require("mongoose");
-const app = express();
-const port = process.env.PORT || 5000;
-
+const PORT = process.env.PORT || 5000;
 const Joi = require("joi");
-// const config = require("config");
+
 Joi.objectId = require("joi-objectid")(Joi);
 require("./startup/routes")(app);
 require("./startup/prod");
@@ -39,9 +37,6 @@ process.on("unhandledRejection", (ex) => {
   logger.error(ex.message, ex);
 });
 
-// const p = Promise.reject(new Error("Something fatal has happened"));
-// p.then(() => console.log("done"));
-
 app.listen(port, () => {
-  console.log(`Listening at port ${port}`);
+  console.log(`Listening at port ${PORT}`);
 });

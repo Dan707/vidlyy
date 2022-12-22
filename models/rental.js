@@ -1,11 +1,8 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
-const { customerSchema } = require("./customer");
-const { movieSchema } = require("./movie");
 
 const validateRentals = (rental) => {
   const schema = Joi.object({
-    // title: Joi.string().min(5).max(50).required(),
     customerId: Joi.objectId().required(),
     movieId: Joi.objectId().required(),
   });
